@@ -1,5 +1,9 @@
 package com.example.Java_Spring_Laptopshop_Final.controller.admin;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -9,21 +13,27 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.Java_Spring_Laptopshop_Final.domain.User;
+import com.example.Java_Spring_Laptopshop_Final.service.UploadService;
 import com.example.Java_Spring_Laptopshop_Final.service.UserService;
+
+import jakarta.servlet.ServletContext;
 
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class UserController {
 
     private final UserService userService;
+    private final UploadService uploadService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UploadService uploadService) {
         this.userService = userService;
+        this.uploadService = uploadService;
     }
 
     @RequestMapping("/")
@@ -51,15 +61,18 @@ public class UserController {
         return "admin/user/detail";
     }
 
-    @RequestMapping("/admin/user/create")
+    @GetMapping("/admin/user/create")
     public String getCreateUserPage(Model model) {
         model.addAttribute("newUser", new User());
         return "admin/user/create";
     }
 
-    @RequestMapping(value = "/admin/user/create", method = RequestMethod.POST)
-    public String createUserAdminPage(Model model, @ModelAttribute("newUser") User hieu) {
-        this.userService.handleSaveUser(hieu);
+    @PostMapping(value = "/admin/user/create")
+    public String createUserAdminPage(Model model, @ModelAttribute("newUser") User hieu,
+            @RequestParam("userFile") MultipartFile file) {
+        String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
+
+        // this.userService.handleSaveUser(hieu);
         return "redirect:/admin/user";
     }
 
