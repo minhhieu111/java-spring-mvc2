@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,11 +18,7 @@ import com.example.Java_Spring_Laptopshop_Final.domain.User;
 import com.example.Java_Spring_Laptopshop_Final.service.UploadService;
 import com.example.Java_Spring_Laptopshop_Final.service.UserService;
 
-import jakarta.servlet.ServletContext;
-
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,10 +28,12 @@ public class UserController {
 
     private final UserService userService;
     private final UploadService uploadService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService, UploadService uploadService) {
+    public UserController(UserService userService, UploadService uploadService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.uploadService = uploadService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @RequestMapping("/")
@@ -71,8 +71,11 @@ public class UserController {
     public String createUserAdminPage(Model model, @ModelAttribute("newUser") User hieu,
             @RequestParam("userFile") MultipartFile file) {
         String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
-
-        // this.userService.handleSaveUser(hieu);
+        String hashPassword = this.passwordEncoder.encode(hieu.getPassword());
+        hieu.setAvatar(avatar);
+        hieu.setPassword(hashPassword);
+        hieu.setRole(this.userService.getRoleByName(hieu.getRole().getName()));
+        this.userService.handleSaveUser(hieu);
         return "redirect:/admin/user";
     }
 
