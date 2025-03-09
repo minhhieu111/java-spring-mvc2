@@ -80,7 +80,7 @@
 
                                                 <div class="mb-3 col-12 col-md-6">
                                                     <label for="avatarFile" class="form-label">Avatar:</label>
-                                                    <input class="form-control" type="file" id="avatarFile"
+                                                    <form:input class="form-control" type="file" id="avatarFile"
                                                         accept=".png, .jpg, .jpeg" name="userFile" />
                                                 </div>
 
