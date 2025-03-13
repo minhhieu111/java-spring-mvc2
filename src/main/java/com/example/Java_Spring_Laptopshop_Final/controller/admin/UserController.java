@@ -1,12 +1,7 @@
 package com.example.Java_Spring_Laptopshop_Final.controller.admin;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,16 +29,6 @@ public class UserController {
         this.userService = userService;
         this.uploadService = uploadService;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @RequestMapping("/")
-    public String getHomePage(Model model) {
-        List<User> arrUsers = this.userService.getAllUsersByEmail("Hieu@gmail.com");
-        System.out.println(arrUsers);
-
-        model.addAttribute("eric", "test");
-        model.addAttribute("hieu", "Form controller with model");
-        return "hello";
     }
 
     @RequestMapping("/admin/user")
